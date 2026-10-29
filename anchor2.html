@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eco Mission · Grow a Greener School</title>
+<style>
+:root{
+  --ink:#244638;--green:#286347;--deep:#194b34;
+  --mint:#edf5e9;--paper:#fffef8;--line:#d5dfcc;
+  --muted:#657460;--yellow:#f5df9a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);background:#edf2e5;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.65;
+  background-image:radial-gradient(#cad7bd 1px,transparent 1px);
+  background-size:24px 24px;
+}
+button,input,textarea,select{font:inherit}
+button{
+  padding:11px 17px;border:1px solid var(--line);border-radius:14px;
+  background:var(--paper);color:var(--ink);font-weight:700;cursor:pointer;
+}
+button:hover:not(:disabled){background:#e6efdd;border-color:var(--green)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:3px solid #d49b23;outline-offset:3px;
+}
+.primary{background:var(--green);border-color:var(--green);color:white}
+.primary:hover:not(:disabled){background:var(--deep);color:white}
+.shell{max-width:980px;margin:auto;padding:24px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:.07em}
+.brand small{display:block;font-weight:500;letter-spacing:0;color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.time{font-weight:800;font-variant-numeric:tabular-nums}
+nav{display:flex;gap:8px;margin:22px 0;flex-wrap:wrap}
+.step{padding:8px 14px;border-radius:30px;background:#e0e9d6;font-size:.9rem}
+.step.active{background:var(--green);color:white}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:26px;
+  padding:clamp(22px,4vw,40px);box-shadow:0 12px 35px #314d2510;
+  position:relative;overflow:hidden;
+}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.14;margin:12px 0 20px;letter-spacing:-.045em}
+h2{font-size:clamp(1.5rem,3vw,2rem);line-height:1.3;margin:0 0 16px}
+h3{margin:10px 0}
+p{margin:12px 0}
+.eyebrow{font-size:.78rem;font-weight:900;letter-spacing:.15em;color:var(--green)}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.tile{padding:18px;background:var(--mint);border:1px solid #dce7d4;border-radius:16px}
+.tile strong{display:block}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:20px}
+.art{width:100%;max-width:370px;display:block;margin:auto}
+.garden{
+  display:flex;align-items:center;gap:16px;padding:13px 18px;
+  margin-bottom:24px;background:#eef4e5;border:1px solid var(--line);border-radius:18px;
+}
+.garden svg{width:74px;height:74px;flex-shrink:0}
+.garden strong{display:block}
+.leaf{display:inline-block;transform:rotate(-18deg);font-size:1.5rem}
+.story{font-size:1.12rem;line-height:2.35}
+.phrase{
+  display:inline;padding:3px 7px;border:0;border-radius:6px;
+  background:var(--yellow);font-weight:800;line-height:inherit;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+}
+.phrase.seen{background:#cfe4c8}
+.detail{
+  padding:18px 20px;background:var(--mint);border-left:4px solid var(--green);
+  border-radius:12px;margin-top:18px;min-height:90px;
+}
+.options{display:grid;gap:11px;margin:22px 0}
+.option{text-align:left;padding:16px 18px}
+.option.correct{background:#dcefdc;border-color:#7fa77c}
+.feedback{padding:16px 18px;border-radius:12px;margin-top:16px}
+.good{background:#e4f2e0;border:1px solid #9bbd8f}
+.bad{background:#fff0e9;border:1px solid #dfb2a2;color:#773b2b}
+.note{background:#fff5d8;border:1px solid #e3cf94}
+input,textarea{
+  width:100%;padding:15px;border:2px solid var(--line);
+  background:white;color:var(--ink);border-radius:13px;margin:12px 0;
+}
+textarea{min-height:110px;resize:vertical}
+select{padding:7px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink)}
+.sentence{font-size:1.22rem;padding:24px;background:var(--mint);border-radius:16px}
+.progress{height:8px;background:#e1e9d9;border-radius:10px;margin:18px 0 26px}
+.progress span{display:block;height:100%;background:var(--green);border-radius:10px}
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:.94rem}
+th,td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line)}
+th{background:var(--mint)}
+summary{cursor:pointer;font-weight:700}
+.hidden{display:none!important}
+footer{text-align:center;font-size:.8rem;color:var(--muted);margin-top:18px}
+.audio-controls{margin-bottom:18px;padding:12px;background:#f2f4e9;border-radius:12px}
+#speechStatus{min-height:1.5em}
+@media(max-width:650px){
+  .shell{padding:16px 12px 35px}
+  .hero{grid-template-columns:1fr}
+  .art{max-width:240px}
+  .grid{grid-template-columns:1fr}
+  .card{border-radius:19px}
+  table{font-size:.8rem}
+  th,td{padding:9px 4px}
+}
+@media(prefers-reduced-motion:no-preference){
+  .art .crown{animation:sway 5s ease-in-out infinite;transform-origin:180px 240px}
+  @keyframes sway{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+}
+@media print{
+  body{background:white}
+  header,nav,footer,.actions,.no-print{display:none!important}
+  .card{box-shadow:none;border:0;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="brand">🌿 ECO MISSION<small>Small actions. A greener tomorrow.</small></div>
+  <div class="row">
+    <span class="time" id="timer">10:00</span>
+    <button id="pauseButton" class="hidden" onclick="togglePause()">Pause</button>
+  </div>
+</header>
+<nav id="steps" aria-label="Learning stages"></nav>
+<main id="app"></main>
+<footer>Self-contained activity · No login · Progress stays in this tab</footer>
+</div>
+
+<script>
+"use strict";
+
+const data=[
+{
+  phrase:"find out",story:"find out",ko:"알아내다",
+  meaning:"learn or discover information",
+  pattern:"find out + information / find out how, why, or what ...",
+  example:"We want to find out how much paper our school uses.",
+  note:"find out은 정보를 알아내는 것이에요. 아이디어를 생각해 내는 것은 come up with예요.",
+  question:"Your team counts the bags of rubbish every day. What do you want to do?",
+  options:[
+    "Find out how much waste the school produces.",
+    "Come up with how much waste the school produces.",
+    "Carry out how much waste the school produces."
+  ],correct:0,
+  sentence:"Before our class picnic, we need to ____ whether the park has recycling bins.",
+  hint:"새로운 정보를 확인하고 알아내는 행동이에요.",
+  translation:"학급 소풍 전에, 공원에 재활용 쓰레기통이 있는지 알아내야 해요."
+},
+{
+  phrase:"set up",story:"set up",ko:"설치하다 / 마련하다",
+  meaning:"put something in place so it is ready to use",
+  pattern:"set up + boxes / a station / a club",
+  example:"Let's set up recycling boxes near the classroom.",
+  note:"set up은 사용할 수 있도록 설치하거나 마련하는 것이에요. 계획을 실행하는 carry out과 구별해요.",
+  question:"The school has no recycling station. Your team puts three new bins near the gate. What are you doing?",
+  options:[
+    "Carrying out the bins.",
+    "Setting up a recycling station.",
+    "Finding out a recycling station."
+  ],correct:1,
+  sentence:"At the picnic area, we will ____ a recycling station beside the tables.",
+  hint:"사람들이 사용할 수 있도록 공간이나 물건을 마련하는 행동이에요.",
+  translation:"소풍 장소에서, 우리는 탁자 옆에 재활용 분리수거 공간을 마련할 거예요."
+},
+{
+  phrase:"sort out",story:"sort out",ko:"분류하다 / 나누어 정리하다",
+  meaning:"separate things into groups",
+  pattern:"sort out + waste / sort out A from B",
+  example:"Please sort out paper and plastic before recycling.",
+  note:"이 글에서 sort out은 쓰레기를 종류별로 분류한다는 뜻이에요. 다른 문맥에서는 문제를 해결한다는 뜻도 있어요.",
+  question:"You put paper in one box and plastic in another. Which expression describes this?",
+  options:["Pay attention to the waste.","Set up the waste.","Sort out the waste."],
+  correct:2,
+  sentence:"After lunch, we need to ____ the waste into paper, plastic, and food waste.",
+  hint:"섞여 있는 것을 종류별로 나누는 행동이에요.",
+  translation:"점심 식사 후에, 쓰레기를 종이, 플라스틱, 음식물 쓰레기로 분류해야 해요."
+},
+{
+  phrase:"pay attention to",story:"pay attention to",ko:"~에 주의를 기울이다",
+  meaning:"look at or listen to something carefully",
+  pattern:"pay attention to + signs / instructions",
+  example:"Please pay attention to the recycling signs.",
+  note:"to까지 포함해야 해요: pay attention to the signs.",
+  question:"Some students put plastic in the paper box because they do not read the labels. What should they do?",
+  options:[
+    "Pay attention to the labels.",
+    "Carry out the labels.",
+    "Come up with the labels carefully."
+  ],correct:0,
+  sentence:"Please ____ the labels before you put a bottle in a bin.",
+  hint:"표시나 설명을 자세히 보고 신경 쓰는 행동이에요. 마지막 전치사도 필요해요.",
+  translation:"병을 쓰레기통에 넣기 전에 표시를 주의 깊게 봐 주세요."
+},
+{
+  phrase:"come up with",story:"came up with",ko:"~을 생각해 내다",
+  meaning:"think of an idea or a solution",
+  pattern:"come up with + an idea / a game / a solution",
+  example:"Can you come up with a fun recycling game?",
+  note:"새로운 아이디어를 생각해 내는 것이에요. 과거형은 came up with이에요. Discover에서는 본문에 나온 과거형을 읽어 줘요.",
+  question:"Students are bored with recycling. Your friend thinks of a new points game. What did your friend do?",
+  options:[
+    "Sorted out a new points game.",
+    "Came up with a new points game.",
+    "Paid attention to a new points game."
+  ],correct:1,
+  sentence:"To make our next picnic greener, can you ____ a new idea?",
+  hint:"아직 없던 아이디어나 해결책을 머릿속에서 만들어 내는 행동이에요.",
+  translation:"다음 소풍을 더 친환경적으로 만들기 위해, 새로운 아이디어를 생각해 낼 수 있나요?"
+},
+{
+  phrase:"carry out",story:"carry out",ko:"수행하다 / 실행하다",
+  meaning:"do a plan or a task",
+  pattern:"carry out + a plan / a project / a task",
+  example:"Our team will carry out the recycling plan.",
+  note:"정한 계획을 실제로 실행하는 것이에요. 물건이나 공간을 설치하고 마련하는 것은 set up이에요.",
+  question:"Your team has finished planning. Now you follow the plan and collect waste every day. What are you doing?",
+  options:[
+    "Setting up an idea.",
+    "Finding out the plan.",
+    "Carrying out the plan."
+  ],correct:2,
+  sentence:"We have agreed on the steps. Now we are ready to ____ our clean-up plan.",
+  hint:"이미 세운 계획을 행동으로 옮기는 것이에요.",
+  translation:"우리는 절차에 합의했어요. 이제 청소 계획을 실행할 준비가 되었어요."
+}
+];
+
+const app=document.getElementById("app");
+const steps=document.getElementById("steps");
+const timer=document.getElementById("timer");
+const pauseButton=document.getElementById("pauseButton");
+
+let page="welcome",index=0,seen=new Set(),selected=null;
+let remaining=600,started=false,paused=false,lastTick=Date.now();
+let accent="en-US",soundOn=true,voices=[],currentUtterance=null;
+let ownSentence="",ownExpression="find out";
+let meaning=[],writing=[];
+
+function resetRecords(){
+  meaning=data.map(()=>({attempts:0,first:false,done:false,wrong:[],feedback:""}));
+  writing=data.map(()=>({
+    attempts:0,first:false,done:false,hint:false,revealed:false,
+    studying:false,draft:"",feedback:""
+  }));
+}
+resetRecords();
+
+function esc(value){
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function treeArt(){
+return `<svg class="art" viewBox="0 0 360 320" role="img" aria-label="A leafy tree growing beside recycling bins">
+  <circle cx="184" cy="151" r="130" fill="#e6edcf"/>
+  <circle cx="286" cy="65" r="25" fill="#f5d882"/>
+  <ellipse cx="180" cy="282" rx="153" ry="21" fill="#d8e2c3"/>
+  <path d="M165 269 L171 140 L190 140 L199 269Z" fill="#9c7753"/>
+  <path d="M180 201 L143 167 M183 178 L219 144" stroke="#9c7753" stroke-width="12" stroke-linecap="round"/>
+  <g class="crown">
+    <circle cx="131" cy="128" r="55" fill="#80a962"/>
+    <circle cx="182" cy="88" r="64" fill="#659452"/>
+    <circle cx="232" cy="131" r="58" fill="#7ba65c"/>
+    <circle cx="178" cy="146" r="63" fill="#5c8a49"/>
+    <path d="M139 89 Q151 72 168 79 Q160 98 139 89" fill="#bfd39a"/>
+    <path d="M210 127 Q225 111 239 120 Q234 138 210 127" fill="#bfd39a"/>
+    <path d="M147 159 Q158 143 173 149 Q169 165 147 159" fill="#a9c785"/>
+  </g>
+  <g>
+    <rect x="51" y="224" width="52" height="54" rx="8" fill="#6e9d7a"/>
+    <rect x="47" y="219" width="60" height="10" rx="4" fill="#436f52"/>
+    <text x="77" y="258" text-anchor="middle" font-size="27" fill="#fffef8">♻</text>
+    <rect x="249" y="224" width="52" height="54" rx="8" fill="#cfad66"/>
+    <rect x="245" y="219" width="60" height="10" rx="4" fill="#aa8848"/>
+    <text x="275" y="258" text-anchor="middle" font-size="27" fill="#fffef8">♻</text>
+  </g>
+  <path d="M114 278 Q107 248 121 242 Q135 260 114 278" fill="#7c9f58"/>
+  <path d="M225 279 Q211 254 222 247 Q239 258 225 279" fill="#7c9f58"/>
+</svg>`;
+}
+
+function garden(){
+  const count=writing.filter(r=>r.done).length;
+  return `<div class="garden">
+    <svg viewBox="0 0 80 80" role="img" aria-label="Growing plant">
+      <ellipse cx="40" cy="69" rx="30" ry="7" fill="#d8e1c4"/>
+      <path d="M40 66V26" stroke="#64864c" stroke-width="5" stroke-linecap="round"/>
+      <path d="M39 49Q13 49 17 28Q39 27 39 49" fill="#8bad67"/>
+      <path d="M41 39Q64 39 64 18Q42 17 41 39" fill="#69984f"/>
+      ${count>=3?'<path d="M41 58Q68 58 66 39Q43 37 41 58" fill="#a3bd76"/>':""}
+      ${count===6?'<circle cx="40" cy="19" r="10" fill="#e5bf68"/><circle cx="40" cy="19" r="4" fill="#fff8d9"/>':""}
+    </svg>
+    <div><strong>${count===6?"Your learning tree is blooming!":"Let your learning grow."}</strong>
+    <span class="small muted">${count}/6 writing missions completed · Every expression is a new leaf.</span></div>
+  </div>`;
+}
+
+function pageStage(){
+  if(page==="discover")return 0;
+  if(page==="meaning")return 1;
+  if(page==="bridge"||page==="writing")return 2;
+  return -1;
+}
+
+function navigation(){
+  const current=pageStage();
+  const labels=["1 · Discover","2 · Choose","3 · Use"];
+  const available=[started,seen.size===6,meaning.every(r=>r.done)];
+  steps.innerHTML=labels.map((label,i)=>`
+    <button class="step ${current===i?"active":""}"
+      ${!available[i]?"disabled":""}
+      ${current===i?'aria-current="step"':""}
+      onclick="goStage(${i})">${label}</button>
+  `).join("");
+}
+
+function saveDraft(){
+  if(page==="writing"){
+    const input=document.getElementById("answer");
+    if(input&&!writing[index].done)writing[index].draft=input.value;
+  }
+  const own=document.getElementById("ownSentence");
+  if(own)ownSentence=own.value;
+  const choice=document.getElementById("ownExpression");
+  if(choice)ownExpression=choice.value;
+}
+
+function stopSpeech(){
+  if("speechSynthesis" in window)window.speechSynthesis.cancel();
+}
+
+function render(html){
+  stopSpeech();
+  app.innerHTML=`<section class="card">${html}</section>`;
+  navigation();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function goStage(stage){
+  if(stage===0&&!started)return;
+  if(stage===1&&seen.size<6)return;
+  if(stage===2&&!meaning.every(r=>r.done))return;
+  saveDraft();
+  if(stage===0){page="discover";showDiscover()}
+  if(stage===1){
+    page="meaning";
+    index=meaning.findIndex(r=>!r.done);
+    if(index<0)index=0;
+    showMeaning();
+  }
+  if(stage===2){
+    page="writing";
+    index=writing.findIndex(r=>!r.done);
+    if(index<0)index=0;
+    showWriting();
+  }
+}
+
+function progress(label){
+  return `<div class="row spread">
+    <span class="eyebrow">${label}</span><strong>${index+1} / 6</strong>
+  </div><div class="progress"><span style="width:${(index+1)/6*100}%"></span></div>`;
+}
+
+function loadVoices(){
+  if("speechSynthesis" in window)voices=window.speechSynthesis.getVoices();
+}
+if("speechSynthesis" in window){
+  loadVoices();
+  window.speechSynthesis.addEventListener("voiceschanged",loadVoices);
+}
+
+function speechStatus(message){
+  const area=document.getElementById("speechStatus");
+  if(area)area.textContent=message;
+}
+
+function speak(text,manual=false){
+  if(!manual&&!soundOn)return;
+  if(!("speechSynthesis" in window)&&!("SpeechSynthesisUtterance" in window)){
+    speechStatus("이 브라우저는 음성 재생을 지원하지 않아요. Chrome 또는 Edge에서 열어 주세요.");
+    return;
+  }
+  if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+    speechStatus("음성 재생을 사용할 수 없어요.");
+    return;
+  }
+  loadVoices();
+  stopSpeech();
+  const exact=voices.filter(v=>v.lang.toLowerCase()===accent.toLowerCase());
+  const english=voices.filter(v=>/^en[-_]/i.test(v.lang));
+  const preferred=exact.find(v=>/Google|Microsoft|Samantha|Daniel/i.test(v.name))||exact[0];
+  const voice=preferred||english[0];
+  if(!voice&&voices.length){
+    speechStatus("영어 음성이 설치되어 있지 않아요. 기기의 영어 음성을 추가해 주세요.");
+    return;
+  }
+  currentUtterance=new SpeechSynthesisUtterance(text);
+  currentUtterance.lang=voice?voice.lang:accent;
+  if(voice)currentUtterance.voice=voice;
+  currentUtterance.rate=.88;
+  currentUtterance.pitch=1;
+  const fallback=voice&&voice.lang.toLowerCase()!==accent.toLowerCase();
+  currentUtterance.onstart=()=>speechStatus(
+    fallback?`Playing with available English voice: ${voice.name}`:`🔊 ${text}`
+  );
+  currentUtterance.onend=()=>speechStatus(
+    fallback?"선택한 억양의 음성이 없어 사용 가능한 영어 음성으로 재생했어요.":"Click a highlighted expression to listen again."
+  );
+  currentUtterance.onerror=event=>{
+    if(event.error!=="interrupted"&&event.error!=="canceled"){
+      speechStatus("음성을 재생하지 못했어요. 🔊 버튼을 다시 누르거나 기기의 영어 음성을 확인해 주세요.");
+    }
+  };
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+function audioControls(){
+  return `<div class="audio-controls">
+    <div class="row">
+      <label for="accent"><strong>Pronunciation</strong></label>
+      <select id="accent" onchange="accent=this.value;stopSpeech()">
+        <option value="en-US" ${accent==="en-US"?"selected":""}>American English</option>
+        <option value="en-GB" ${accent==="en-GB"?"selected":""}>British English</option>
+      </select>
+      <label class="small"><input type="checkbox"
+        ${soundOn?"checked":""}
+        onchange="soundOn=this.checked;if(!soundOn)stopSpeech()">
+        Play when clicked</label>
+    </div>
+    <div id="speechStatus" class="small muted" role="status">
+      Click a highlighted expression to hear it. · 기기에서 제공하는 영어 음성을 사용해요.
+    </div>
+  </div>`;
+}
+
+function showWelcome(){
+  page="welcome";
+  render(`
+    <div class="hero">
+      <div>
+        <div class="eyebrow">GROW YOUR ENGLISH · GROW YOUR IMPACT</div>
+        <h1>A little English.<br>A greener world.</h1>
+        <p>Join the Eco Team. Learn six expressions and use them to plan a greener picnic.</p>
+        <p class="muted">이야기로 이해하고, 기억해서 고르고, 새로운 상황에서 직접 써 보세요.</p>
+        <button class="primary" onclick="start()">Plant my first seed →</button>
+      </div>
+      ${treeArt()}
+    </div>
+    <div class="grid">
+      <div class="tile"><strong>🌱 Discover · 2 min</strong>Explore the story and listen to expressions.</div>
+      <div class="tile"><strong>🌿 Choose · 3 min</strong>Connect each situation with the right expression.</div>
+      <div class="tile"><strong>🌳 Use · 5 min</strong>Type expressions in a new situation.</div>
+    </div>
+    <p class="small muted">The timer is a guide. You can continue after ten minutes.
+    Use the top buttons to revisit unlocked stages. Your answers will stay.</p>
+  `);
+}
+
+function start(){
+  started=true;page="discover";lastTick=Date.now();
+  pauseButton.classList.remove("hidden");
+  showDiscover();
+}
+
+function showDiscover(){
+  page="discover";
+  const word=i=>`<button class="phrase ${seen.has(i)?"seen":""}"
+    onclick="explore(${i})" aria-label="Explore and hear ${data[i].story}">
+    ${data[i].story}</button>`;
+  render(`
+    ${garden()}
+    <div class="eyebrow">DISCOVER · ABOUT 2 MINUTES</div>
+    <h2>Starting a Recycling Project <span class="leaf">🌿</span></h2>
+    <p class="muted">Click all six expressions to explore their meanings and hear their pronunciation.</p>
+    ${audioControls()}
+    <div class="story">
+      A group of students wanted to ${word(0)} how much waste their school produced each day.
+      They decided to ${word(1)} recycling boxes for paper and plastic.
+      They also asked classmates to ${word(2)} their waste carefully.
+      At first, many students did not ${word(3)} the recycling signs,
+      so the team ${word(4)} a simple points game.
+      With more students joining the project, the team was able to ${word(5)}
+      the plan for an entire month.
+    </div>
+    <div class="detail" id="expressionDetail" aria-live="polite">
+      <strong>Six expressions. Six useful actions.</strong>
+      <p>노란 표현을 누르면 뜻과 예문이 나타나고, 본문에 나온 표현의 발음이 들려요.</p>
+    </div>
+    <details style="margin-top:20px">
+      <summary>Story support · 한국어 줄거리</summary>
+      <p>학생들은 학교에서 매일 얼마나 많은 쓰레기가 나오는지 알아보려고 했어요.
+      종이와 플라스틱을 위한 재활용 상자를 설치하고, 친구들에게 쓰레기를 분류해 달라고 했어요.
+      처음에는 많은 학생들이 재활용 표시에 주의를 기울이지 않았어요.
+      그래서 팀은 간단한 점수 게임을 생각해 냈고,
+      더 많은 학생들이 참여하면서 한 달 동안 계획을 실행할 수 있었어요.</p>
+    </details>
+    <div class="actions">
+      <button id="discoverNext" class="primary" ${seen.size<6?"disabled":""}
+        onclick="goStage(1)">Check my understanding →</button>
+      <span class="small muted" id="seenCount">${seen.size}/6 expressions explored</span>
+    </div>
+  `);
+  if(selected!==null)showExpression(selected);
+}
+
+function showExpression(i){
+  const e=data[i];
+  document.getElementById("expressionDetail").innerHTML=`
+    <div class="row spread">
+      <strong>${e.phrase} · ${e.ko}</strong>
+      <div class="row">
+        <button onclick="speak(data[${i}].phrase,true)">🔊 Base form</button>
+        <button onclick="speak(data[${i}].example,true)">🔊 Example</button>
+      </div>
+    </div>
+    <p>${e.meaning}</p>
+    <p><b>Pattern:</b> ${e.pattern}<br><b>Example:</b> ${e.example}</p>
+    <p class="small muted">${e.note}</p>`;
+}
+
+function explore(i){
+  selected=i;seen.add(i);showExpression(i);
+  document.querySelectorAll(".phrase")[i].classList.add("seen");
+  document.getElementById("seenCount").textContent=`${seen.size}/6 expressions explored`;
+  document.getElementById("discoverNext").disabled=seen.size<6;
+  navigation();
+  speak(data[i].story);
+}
+
+function showMeaning(){
+  page="meaning";
+  const e=data[index],r=meaning[index];
+  render(`
+    ${progress("CHOOSE · MEANING CHECK")}
+    <h2>Which action fits?</h2>
+    <p>${e.question}</p>
+    <div class="options">
+      ${e.options.map((option,i)=>`
+        <button class="option ${r.done&&i===e.correct?"correct":""}"
+          ${r.done||r.wrong.includes(i)?"disabled":""}
+          onclick="checkMeaning(${i})">${option}</button>
+      `).join("")}
+    </div>
+    <div id="feedback" aria-live="polite">${r.done?meaningSuccess(e):r.feedback}</div>
+    <div class="actions">
+      <button onclick="previousMeaning()">← ${index===0?"Discover":"Previous question"}</button>
+      <button class="primary" ${!r.done?"disabled":""} onclick="nextMeaning()">
+        ${index===5?"Next stage →":"Next question →"}
+      </button>
+    </div>
+  `);
+}
+
+function meaningSuccess(e){
+  return `<div class="feedback good"><strong>✓ ${e.phrase} — ${e.ko}</strong>
+    <p>${e.meaning}.<br>${e.example}</p></div>`;
+}
+
+function checkMeaning(choice){
+  const e=data[index],r=meaning[index];
+  if(r.done||r.wrong.includes(choice))return;
+  r.attempts++;
+  if(choice===e.correct){
+    r.done=true;r.first=r.attempts===1;r.feedback="";
+  }else{
+    r.wrong.push(choice);
+    r.feedback=`<div class="feedback bad"><strong>Think about the action.</strong>
+      <p>${e.note}</p>Choose again.</div>`;
+  }
+  showMeaning();
+}
+
+function previousMeaning(){
+  if(index>0){index--;showMeaning()}
+  else showDiscover();
+}
+function nextMeaning(){
+  if(!meaning[index].done)return;
+  if(index<5){index++;showMeaning()}
+  else showBridge();
+}
+
+function showBridge(){
+  page="bridge";
+  render(`
+    <div class="hero">
+      <div>
+        <div class="eyebrow">USE · ABOUT 5 MINUTES</div>
+        <h2>A new mission:<br>a greener picnic.</h2>
+        <p>Your class is planning a picnic. Complete six new sentences using the expressions you learned.</p>
+        <p class="muted">빈칸에는 표현 전체를 써 주세요. 이번 문장에서는 모두 기본형을 사용해요.</p>
+      </div>${treeArt()}
+    </div>
+    <div class="detail"><strong>Try from memory first.</strong>
+      <p>필요하면 뜻 힌트를 볼 수 있어요. 정답을 확인했다면, 숨긴 뒤 다시 써 보세요.</p></div>
+    <div class="actions">
+      <button onclick="index=5;showMeaning()">← Previous stage</button>
+      <button class="primary" onclick="goStage(2)">Start writing →</button>
+    </div>
+  `);
+}
+
+function normalize(text){
+  return text.toLowerCase().trim().replace(/[.!?]+$/,"").trim().replace(/\s+/g," ");
+}
+
+function writingSuccess(e,r){
+  return `<div class="feedback good">
+    <strong>✓ ${e.sentence.replace("____",e.phrase)}</strong>
+    <p>${e.translation}</p>
+    <span class="small">${r.first?"Recalled independently on your first try.":"Completed with practice. Keep reviewing this expression."}</span>
+  </div>`;
+}
+
+function showWriting(){
+  page="writing";
+  const e=data[index],r=writing[index];
+  render(`
+    ${garden()}
+    ${progress("USE · A GREENER PICNIC")}
+    <h2>Turn your words into action.</h2>
+    <p class="muted">Type the complete expression in its base form. 표현 전체를 기본형으로 쓰세요.</p>
+    <p class="sentence">${e.sentence.replace("____","<strong>________</strong>")}</p>
+    <form id="answerForm">
+      <label for="answer"><strong>Missing expression</strong></label>
+      <input id="answer" value="${esc(r.done?e.phrase:r.draft)}"
+        ${r.done||r.studying?"disabled":""}
+        autocomplete="off" autocapitalize="off" spellcheck="false"
+        placeholder="Type the expression…" aria-describedby="inputHelp">
+      <div id="inputHelp" class="small muted">Capital letters and extra spaces are okay.</div>
+      <div class="actions">
+        <button type="submit" class="primary" ${r.done||r.studying?"disabled":""}>Check answer</button>
+        <button type="button" onclick="showHint()" ${r.done||r.hint?"disabled":""}>Meaning hint</button>
+      </div>
+    </form>
+    <div aria-live="polite">
+      ${r.hint&&!r.done?`<div class="feedback note">${e.hint}</div>`:""}
+      ${r.done?writingSuccess(e,r):r.studying?`
+        <div class="feedback note"><strong>${e.phrase} · ${e.ko}</strong>
+        <p>${e.sentence.replace("____",e.phrase)}</p>
+        <button onclick="hideAnswer()">Hide answer & type from memory</button></div>
+      `:r.feedback}
+    </div>
+    <div class="actions">
+      <button onclick="previousWriting()">← ${index===0?"Previous stage":"Previous question"}</button>
+      ${!r.done&&r.attempts>0&&!r.studying?'<button onclick="studyAnswer()">Study the answer</button>':""}
+      <button class="primary" ${!r.done?"disabled":""} onclick="nextWriting()">
+        ${index===5?"See my learning report →":"Next question →"}
+      </button>
+    </div>
+  `);
+  const input=document.getElementById("answer");
+  input.addEventListener("input",()=>{r.draft=input.value});
+  document.getElementById("answerForm").addEventListener("submit",event=>{
+    event.preventDefault();checkWriting();
+  });
+}
+
+function checkWriting(){
+  const e=data[index],r=writing[index];
+  if(r.done||r.studying)return;
+  saveDraft();
+  const value=normalize(r.draft);
+  if(!value){
+    r.feedback='<div class="feedback note">Type an expression first. 먼저 답을 입력해 주세요.</div>';
+    showWriting();document.getElementById("answer").focus();return;
+  }
+  r.attempts++;
+  if(value===e.phrase){
+    r.done=true;r.first=r.attempts===1&&!r.hint&&!r.revealed;
+    r.feedback="";
+  }else{
+    let tip="뜻과 철자를 확인하고, 표현 전체를 다시 써 보세요.";
+    if(e.phrase==="pay attention to"&&value==="pay attention"){
+      tip="거의 맞았어요! 뒤의 대상과 연결하는 전치사가 필요해요.";
+    }else if(e.phrase==="come up with"&&value==="came up with"){
+      tip="can 뒤에는 동사 기본형이 필요해요. 과거형을 기본형으로 바꿔 보세요.";
+    }else if(value.includes(e.phrase)){
+      tip="문장 전체가 아니라 빈칸에 들어갈 표현만 입력해 주세요.";
+    }
+    r.feedback=`<div class="feedback bad"><strong>Not quite yet. Try again!</strong><p>${tip}</p></div>`;
+  }
+  showWriting();
+  if(!r.done)document.getElementById("answer").focus();
+}
+
+function showHint(){
+  saveDraft();writing[index].hint=true;showWriting();
+  if(!writing[index].studying)document.getElementById("answer").focus();
+}
+function studyAnswer(){
+  saveDraft();
+  const r=writing[index];
+  r.revealed=true;r.studying=true;r.draft="";r.feedback="";
+  showWriting();
+}
+function hideAnswer(){
+  writing[index].studying=false;showWriting();
+  document.getElementById("answer").focus();
+}
+function previousWriting(){
+  saveDraft();
+  if(index>0){index--;showWriting()}
+  else{index=5;showMeaning()}
+}
+function nextWriting(){
+  if(!writing[index].done)return;
+  if(index<5){index++;showWriting()}
+  else showReport();
+}
+
+function showReport(){
+  page="report";pauseButton.classList.add("hidden");
+  const ms=meaning.filter(r=>r.first).length;
+  const ws=writing.filter(r=>r.first).length;
+  const review=data.filter((e,i)=>!meaning[i].first||!writing[i].first);
+  render(`
+    <div class="hero">
+      <div>
+        <div class="eyebrow">MISSION COMPLETE · KEEP GROWING</div>
+        <h1>Your learning<br>has taken root.</h1>
+        <p>You practised six expressions in a school project and a new picnic situation.</p>
+      </div>${treeArt()}
+    </div>
+    <div class="grid">
+      <div class="tile"><strong>${ms}/6 · Meaning</strong>Correct on the first try</div>
+      <div class="tile"><strong>${ws}/6 · Writing</strong>First try, without hints or answers</div>
+      <div class="tile"><strong>6/6 · Completed</strong>Every expression practised</div>
+    </div>
+    <p class="small muted">These are practice results, not a proficiency grade.
+    이전 단계로 돌아가도 최초 응답 기록은 유지돼요.</p>
+    <table>
+      <thead><tr><th>Expression</th><th>Meaning</th><th>Writing</th></tr></thead>
+      <tbody>${data.map((e,i)=>`
+        <tr><td><strong>${e.phrase}</strong><br>${e.ko}</td>
+        <td>${meaning[i].first?"✓ First try":"Practised"}</td>
+        <td>${writing[i].first?"✓ Independent":"Review"}</td></tr>
+      `).join("")}</tbody>
+    </table>
+    <div class="detail">
+      <strong>${review.length?"Your next leaves to grow":"Keep your English growing"}</strong>
+      <p>${review.length?review.map(e=>e.phrase).join(" · "):
+        "You recalled all six independently. Use them in your own project."}</p>
+      <p class="small">Tomorrow, cover the English expressions and recall them from their Korean meanings.</p>
+    </div>
+    <details style="margin-top:22px">
+      <summary>Time left? Write your own Eco Team sentence.</summary>
+      <p>Choose an expression and describe a realistic action for your school.</p>
+      <label for="ownExpression">Expression</label>
+      <select id="ownExpression" onchange="ownExpression=this.value">
+        ${data.map(e=>`<option ${e.phrase===ownExpression?"selected":""}>${e.phrase}</option>`).join("")}
+      </select>
+      <label for="ownSentence" style="display:block;margin-top:12px">Your sentence</label>
+      <textarea id="ownSentence" placeholder="Our team will…"
+        oninput="ownSentence=this.value">${esc(ownSentence)}</textarea>
+      <p class="small">Self-check: Does the meaning fit? Is the whole expression included?
+      Is the verb form correct? Share your sentence with your teacher.</p>
+    </details>
+    <details style="margin-top:20px">
+      <summary>Expression notebook</summary>
+      ${data.map(e=>`<div class="detail"><strong>${e.phrase} · ${e.ko}</strong>
+        <p>${e.pattern}<br>${e.example}</p></div>`).join("")}
+    </details>
+    <div class="actions">
+      <button onclick="saveDraft();index=5;showWriting()">← Previous question</button>
+      <button onclick="window.print()">Print my report</button>
+      <button class="primary" onclick="restart()">Start a new practice</button>
+    </div>
+  `);
+}
+
+function restart(){
+  if(!confirm("Start a new practice? Your current answers and report will be cleared."))return;
+  stopSpeech();resetRecords();
+  index=0;seen=new Set();selected=null;remaining=600;
+  started=false;paused=false;ownSentence="";ownExpression="find out";
+  app.inert=false;app.style.opacity="1";
+  pauseButton.textContent="Pause";pauseButton.classList.add("hidden");
+  timer.textContent="10:00";showWelcome();
+}
+
+function togglePause(){
+  paused=!paused;lastTick=Date.now();
+  pauseButton.textContent=paused?"Resume":"Pause";
+  app.inert=paused;steps.inert=paused;app.style.opacity=paused?".35":"1";
+  if(paused){stopSpeech();timer.textContent="Paused"}
+  else updateTimer();
+}
+
+function updateTimer(){
+  const seconds=Math.ceil(remaining);
+  timer.textContent=seconds>0?
+    `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")}`:
+    "10 minutes reached · Keep going";
+}
+
+setInterval(()=>{
+  const now=Date.now(),elapsed=(now-lastTick)/1000;
+  lastTick=now;
+  if(!started||paused||page==="report")return;
+  remaining=Math.max(0,remaining-elapsed);updateTimer();
+},250);
+
+window.addEventListener("pagehide",stopSpeech);
+showWelcome();
+</script>
+</body>
+</html>
