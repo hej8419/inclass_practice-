@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eco Mission — Recycling Challenge</title>
+<style>
+:root {
+  --ink:#183c34; --green:#146b50; --mint:#e7f5ed;
+  --paper:#fffef9; --line:#cbded3; --yellow:#ffe39a;
+  --muted:#536b62; --red:#a52e36;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:#eff5ef;color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.65;
+}
+button,input,textarea{font:inherit}
+button{
+  border:1px solid var(--line);border-radius:12px;
+  padding:11px 17px;background:white;color:var(--ink);
+  cursor:pointer;font-weight:700;
+}
+button:hover:not(:disabled){border-color:var(--green);background:var(--mint)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible{
+  outline:3px solid #dd9f15;outline-offset:3px;
+}
+.primary{background:var(--green);color:white;border-color:var(--green)}
+.primary:hover:not(:disabled){background:#0c523c;color:white}
+.shell{max-width:960px;margin:auto;padding:24px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{font-weight:900;letter-spacing:.04em}
+.time{font-variant-numeric:tabular-nums;font-weight:800}
+nav{display:flex;gap:8px;margin:22px 0;flex-wrap:wrap}
+.step{padding:7px 12px;border-radius:30px;background:#dfeae1;font-size:.9rem}
+.step.active{background:var(--green);color:white}
+.card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:22px;padding:clamp(20px,4vw,38px);
+  box-shadow:0 8px 28px #153e2910;
+}
+h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin:12px 0 18px}
+h2{line-height:1.3;margin-top:0}
+h3{margin-bottom:8px}
+p{margin:12px 0}
+.eyebrow{font-size:.8rem;font-weight:900;letter-spacing:.12em;color:var(--green)}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.actions{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.tile{padding:16px;border-radius:14px;background:var(--mint)}
+.tile strong{display:block}
+.story{font-size:1.12rem;line-height:2.2}
+.phrase{
+  display:inline;padding:2px 5px;border:0;border-radius:5px;
+  background:var(--yellow);font-weight:800;line-height:inherit;
+}
+.phrase.seen{background:#ceebdc}
+.detail{
+  background:var(--mint);border-left:5px solid var(--green);
+  padding:16px 20px;border-radius:10px;min-height:120px;margin-top:18px;
+}
+.options{display:grid;gap:10px;margin:22px 0}
+.option{text-align:left;padding:15px 18px;font-weight:600}
+.feedback{padding:15px 18px;border-radius:12px;margin-top:16px}
+.good{background:#e0f1e5;border:1px solid #92bca0}
+.bad{background:#fff0ec;border:1px solid #e4aaa2;color:#732a25}
+.note{background:#fff4d6;border:1px solid #e1c775}
+input,textarea{
+  width:100%;padding:14px;border:2px solid var(--line);
+  border-radius:12px;background:white;color:var(--ink);margin:12px 0;
+}
+textarea{min-height:100px;resize:vertical}
+.sentence{font-size:1.25rem;padding:22px;background:var(--mint);border-radius:14px}
+.progress{height:8px;background:#dce9df;border-radius:12px;margin:18px 0}
+.progress span{display:block;height:100%;border-radius:12px;background:var(--green)}
+.badge{font-size:4rem;line-height:1.3}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:.95rem}
+th,td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line)}
+th{background:var(--mint)}
+.small{font-size:.9rem}
+.hidden{display:none!important}
+summary{cursor:pointer;font-weight:700}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:18px}
+@media(max-width:620px){
+  .grid{grid-template-columns:1fr}
+  .shell{padding:16px 12px 35px}
+  header{align-items:flex-start}
+  .card{border-radius:16px}
+  table{font-size:.82rem}
+  td,th{padding:9px 4px}
+}
+@media print{
+  body{background:white}
+  header,nav,footer,.actions,.no-print{display:none!important}
+  .card{box-shadow:none;border:0;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand">♻ ECO MISSION <span class="muted small">/ Grade 8</span></div>
+    <div>
+      <span class="time" id="timer">10:00</span>
+      <button id="pauseButton" class="hidden" onclick="togglePause()">Pause</button>
+    </div>
+  </header>
+  <nav aria-label="Learning stages" id="steps"></nav>
+  <main id="app"></main>
+  <footer>No login • No external resources • Your answers stay in this tab</footer>
+</div>
+<script>
+"use strict";
+
+const expressions = [
+  {
+    phrase:"find out",
+    story:"find out",
+    ko:"알아내다",
+    meaning:"learn or discover information",
+    pattern:"find out + information / find out how, why, or what ...",
+    example:"We want to find out how much paper our school uses.",
+    contrast:"find out은 정보를 알아내는 것이에요. 아이디어를 생각해 내는 것은 come up with예요.",
+    question:"Your team counts the bags of rubbish every day. What do you want to do?",
+    options:[
+      "Find out how much waste the school produces.",
+      "Come up with how much waste the school produces.",
+      "Carry out how much waste the school produces."
+    ],
+    correct:0,
+    sentence:"Before our class picnic, we need to ____ whether the park has recycling bins.",
+    answer:"find out",
+    hint:"새로운 정보를 확인하고 알아내는 행동이에요.",
+    translation:"학급 소풍 전에, 공원에 재활용 쓰레기통이 있는지 알아내야 해요."
+  },
+  {
+    phrase:"set up",
+    story:"set up",
+    ko:"설치하다 / 마련하다",
+    meaning:"put something in place so it is ready to use",
+    pattern:"set up + boxes / a station / a club",
+    example:"Let's set up recycling boxes near the classroom.",
+    contrast:"set up은 사용할 수 있도록 설치하거나 마련하는 것이에요. 계획을 실행하는 carry out과 구별해요.",
+    question:"The school has no recycling station. Your team puts three new bins near the gate. What are you doing?",
+    options:[
+      "Carrying out the bins.",
+      "Setting up a recycling station.",
+      "Finding out a recycling station."
+    ],
+    correct:1,
+    sentence:"At the picnic area, we will ____ a recycling station beside the tables.",
+    answer:"set up",
+    hint:"사람들이 사용할 수 있도록 공간이나 물건을 마련하는 행동이에요.",
+    translation:"소풍 장소에서, 우리는 탁자 옆에 재활용 분리수거 공간을 마련할 거예요."
+  },
+  {
+    phrase:"sort out",
+    story:"sort out",
+    ko:"분류하다 / 나누어 정리하다",
+    meaning:"separate things into groups",
+    pattern:"sort out + waste / sort out A from B",
+    example:"Please sort out paper and plastic before recycling.",
+    contrast:"이 글에서 sort out은 쓰레기를 종류별로 분류한다는 뜻이에요. 다른 문맥에서는 문제를 해결한다는 뜻도 있어요.",
+    question:"You put paper in one box and plastic in another. Which expression describes this?",
+    options:[
+      "Pay attention to the waste.",
+      "Set up the waste.",
+      "Sort out the waste."
+    ],
+    correct:2,
+    sentence:"After lunch, we need to ____ the waste into paper, plastic, and food waste.",
+    answer:"sort out",
+    hint:"섞여 있는 것을 종류별로 나누는 행동이에요.",
+    translation:"점심 식사 후에, 쓰레기를 종이, 플라스틱, 음식물 쓰레기로 분류해야 해요."
+  },
+  {
+    phrase:"pay attention to",
+    story:"pay attention to",
+    ko:"~에 주의를 기울이다",
+    meaning:"look at or listen to something carefully",
+    pattern:"pay attention to + signs / instructions",
+    example:"Please pay attention to the recycling signs.",
+    contrast:"to까지 포함해야 해요: pay attention to the signs.",
+    question:"Some students put plastic in the paper box because they do not read the labels. What should they do?",
+    options:[
+      "Pay attention to the labels.",
+      "Carry out the labels.",
+      "Come up with the labels carefully."
+    ],
+    correct:0,
+    sentence:"Please ____ the labels before you put a bottle in a bin.",
+    answer:"pay attention to",
+    hint:"표시나 설명을 자세히 보고 신경 쓰는 행동이에요. 마지막 전치사도 필요해요.",
+    translation:"병을 쓰레기통에 넣기 전에 표시를 주의 깊게 봐 주세요."
+  },
+  {
+    phrase:"come up with",
+    story:"came up with",
+    ko:"~을 생각해 내다",
+    meaning:"think of an idea or a solution",
+    pattern:"come up with + an idea / a game / a solution",
+    example:"Can you come up with a fun recycling game?",
+    contrast:"come up with은 새로운 아이디어를 생각해 내는 것이에요. 이미 있는 정보를 알아내는 find out과 달라요. 과거형은 came up with이에요.",
+    question:"Students are bored with recycling. Your friend thinks of a new points game. What did your friend do?",
+    options:[
+      "Sorted out a new points game.",
+      "Came up with a new points game.",
+      "Paid attention to a new points game."
+    ],
+    correct:1,
+    sentence:"To make our next picnic greener, can you ____ a new idea?",
+    answer:"come up with",
+    hint:"아직 없던 아이디어나 해결책을 머릿속에서 만들어 내는 행동이에요.",
+    translation:"다음 소풍을 더 친환경적으로 만들기 위해, 새로운 아이디어를 생각해 낼 수 있나요?"
+  },
+  {
+    phrase:"carry out",
+    story:"carry out",
+    ko:"수행하다 / 실행하다",
+    meaning:"do a plan or a task",
+    pattern:"carry out + a plan / a project / a task",
+    example:"Our team will carry out the recycling plan.",
+    contrast:"carry out은 정한 계획을 실제로 실행하는 것이에요. 무엇인가를 설치하거나 마련하는 것은 set up이에요.",
+    question:"Your team has finished planning. Now you follow the plan and collect waste every day. What are you doing?",
+    options:[
+      "Setting up an idea.",
+      "Finding out the plan.",
+      "Carrying out the plan."
+    ],
+    correct:2,
+    sentence:"We have agreed on the steps. Now we are ready to ____ our clean-up plan.",
+    answer:"carry out",
+    hint:"이미 세운 계획을 행동으로 옮기는 것이에요.",
+    translation:"우리는 절차에 합의했어요. 이제 청소 계획을 실행할 준비가 되었어요."
+  }
+];
+
+const app = document.getElementById("app");
+const steps = document.getElementById("steps");
+const timer = document.getElementById("timer");
+const pauseButton = document.getElementById("pauseButton");
+
+let stage = -1;
+let index = 0;
+let seen = new Set();
+let remaining = 600;
+let started = false;
+let paused = false;
+let finished = false;
+let lastTick = Date.now();
+let reviewOpen = false;
+
+let meaning = expressions.map(()=>({attempts:0,first:false,done:false}));
+let production = expressions.map(()=>({
+  attempts:0,first:false,hint:false,revealed:false,done:false
+}));
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[char]));
+}
+
+function navigation(){
+  const labels=["1 · Discover · 2 min","2 · Choose · 3 min","3 · Use · 5 min"];
+  steps.innerHTML=labels.map((label,i)=>
+    `<span class="step ${stage===i?'active':''}" ${stage===i?'aria-current="step"':''}>${label}</span>`
+  ).join("");
+}
+
+function render(html){
+  app.innerHTML=`<section class="card">${html}</section>`;
+  navigation();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function progress(){
+  return `<div class="row spread">
+    <span class="eyebrow">${stage===1?"MEANING CHECK":"NEW SITUATION"}</span>
+    <strong>${index+1} / 6</strong>
+  </div>
+  <div class="progress" aria-label="Question ${index+1} of 6">
+    <span style="width:${index/6*100}%"></span>
+  </div>`;
+}
+
+function start(){
+  stage=0;started=true;lastTick=Date.now();
+  pauseButton.classList.remove("hidden");
+  showStory();
+}
+
+function showWelcome(){
+  render(`
+    <div class="eyebrow">YOUR SCHOOL. YOUR PLAN. YOUR IMPACT.</div>
+    <h1>Small actions.<br>A greener school. 🌱</h1>
+    <p>Become an Eco Team member. Learn six expressions, then use them to plan a greener picnic.</p>
+    <p class="muted">이야기 속 표현을 이해하고, 새로운 상황에서 직접 써 보세요.</p>
+    <div class="grid">
+      <div class="tile"><strong>① Discover · 2 min</strong>Read the story and explore six expressions.</div>
+      <div class="tile"><strong>② Choose · 3 min</strong>Choose expressions that fit each situation.</div>
+      <div class="tile"><strong>③ Use · 5 min</strong>Type expressions in a new situation.</div>
+    </div>
+    <p class="small">The timer is a guide. You can finish even after it reaches zero.
+    Mistakes help you learn; try again after reading the feedback.</p>
+    <button class="primary" onclick="start()">Start my mission →</button>
+  `);
+}
+
+function showStory(){
+  const phraseButton=i=>`<button class="phrase ${seen.has(i)?'seen':''}"
+    onclick="explore(${i})" aria-label="Explore ${expressions[i].phrase}">
+    ${expressions[i].story}</button>`;
+  render(`
+    <div class="eyebrow">DISCOVER · ABOUT 2 MINUTES</div>
+    <h2>Starting a Recycling Project</h2>
+    <p class="muted">Click all six highlighted expressions. 노란 표현을 눌러 뜻과 쓰임을 확인하세요.</p>
+    <div class="story">
+      A group of students wanted to ${phraseButton(0)} how much waste their school produced each day.
+      They decided to ${phraseButton(1)} recycling boxes for paper and plastic.
+      They also asked classmates to ${phraseButton(2)} their waste carefully.
+      At first, many students did not ${phraseButton(3)} the recycling signs,
+      so the team ${phraseButton(4)} a simple points game.
+      With more students joining the project, the team was able to ${phraseButton(5)}
+      the plan for an entire month.
+    </div>
+    <div id="expressionDetail" class="detail" aria-live="polite">
+      <strong>What did the team do?</strong>
+      <p>Explore a highlighted expression to see its meaning and an example.</p>
+    </div>
+    <details style="margin-top:18px">
+      <summary>Story support · 한국어 줄거리</summary>
+      <p>학생들은 학교에서 매일 얼마나 많은 쓰레기가 나오는지 알아보려고 했어요.
+      종이와 플라스틱을 위한 재활용 상자를 설치하고, 친구들에게 쓰레기를 분류해 달라고 했어요.
+      처음에는 많은 학생들이 재활용 표시에 주의를 기울이지 않았어요.
+      그래서 팀은 간단한 점수 게임을 생각해 냈고, 더 많은 학생들이 참여하면서
+      한 달 동안 계획을 실행할 수 있었어요.</p>
+    </details>
+    <div class="actions">
+      <button id="storyNext" class="primary" onclick="beginMeaning()" ${seen.size<6?'disabled':''}>
+        Check my understanding →
+      </button>
+      <span id="seenCount" class="muted">${seen.size}/6 expressions explored</span>
+    </div>
+  `);
+}
+
+function explore(i){
+  seen.add(i);
+  const e=expressions[i];
+  document.getElementById("expressionDetail").innerHTML=`
+    <strong>${e.phrase} · ${e.ko}</strong>
+    <div>${e.meaning}</div>
+    <p><b>Pattern:</b> ${e.pattern}<br><b>Example:</b> ${e.example}</p>
+    <p class="small">${e.contrast}</p>`;
+  document.querySelectorAll(".phrase")[i].classList.add("seen");
+  document.getElementById("seenCount").textContent=`${seen.size}/6 expressions explored`;
+  document.getElementById("storyNext").disabled=seen.size<6;
+}
+
+function beginMeaning(){
+  stage=1;index=0;showMeaning();
+}
+
+function showMeaning(){
+  const e=expressions[index];
+  render(`
+    ${progress()}
+    <h2>Which action fits?</h2>
+    <p>${e.question}</p>
+    <div class="options" id="options">
+      ${e.options.map((option,i)=>`
+        <button class="option" onclick="checkMeaning(${i},this)">${option}</button>
+      `).join("")}
+    </div>
+    <div id="feedback" aria-live="polite"></div>
+    <div class="actions">
+      <button id="next" class="primary hidden" onclick="nextMeaning()">Next →</button>
+    </div>
+  `);
+}
+
+function checkMeaning(choice,button){
+  const e=expressions[index], record=meaning[index];
+  if(record.done)return;
+  record.attempts++;
+  if(choice!==e.correct){
+    button.disabled=true;
+    document.getElementById("feedback").innerHTML=`
+      <div class="feedback bad"><strong>Think about the action.</strong>
+      <p>${e.contrast}</p>Choose again.</div>`;
+    return;
+  }
+  record.done=true;
+  record.first=record.attempts===1;
+  document.querySelectorAll("#options button").forEach(b=>b.disabled=true);
+  document.getElementById("feedback").innerHTML=`
+    <div class="feedback good"><strong>✓ ${e.phrase} — ${e.ko}</strong>
+    <p>${e.meaning}.<br>${e.example}</p></div>`;
+  document.getElementById("next").classList.remove("hidden");
+}
+
+function nextMeaning(){
+  if(!meaning[index].done)return;
+  index++;
+  if(index<6)showMeaning();
+  else{
+    stage=2;index=0;
+    render(`
+      <div class="eyebrow">USE · ABOUT 5 MINUTES</div>
+      <h2>A new mission: a greener picnic 🧺</h2>
+      <p>Your class is planning a picnic. Use the expressions from the recycling story
+      to complete six new sentences.</p>
+      <p class="muted">같은 표현을 새로운 상황에 적용해 보세요. 빈칸에는 표현 전체를 쓰세요.
+      이번 문장에서는 모두 기본형을 사용해요.</p>
+      <div class="detail">
+        <strong>Try from memory first.</strong>
+        <p>You can request a meaning hint. If you need the answer, study it,
+        then hide it and type it yourself.</p>
+      </div>
+      <div class="actions"><button class="primary" onclick="showProduction()">I'm ready →</button></div>
+    `);
+  }
+}
+
+function showProduction(){
+  const e=expressions[index];
+  render(`
+    ${progress()}
+    <h2>Make the picnic greener.</h2>
+    <p class="muted">Type the complete expression. 표현 전체를 영어로 쓰세요.</p>
+    <p class="sentence">${e.sentence.replace("____","<strong>________</strong>")}</p>
+    <form id="answerForm">
+      <label for="answer"><strong>Missing expression</strong></label>
+      <input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false"
+        placeholder="Type here…" aria-describedby="inputHelp">
+      <div id="inputHelp" class="small muted">Use the base form. Capital letters and extra spaces are okay.</div>
+      <div class="actions">
+        <button id="check" class="primary" type="submit">Check answer</button>
+        <button id="hint" type="button" onclick="showHint()">Meaning hint</button>
+      </div>
+    </form>
+    <div id="hintArea" aria-live="polite"></div>
+    <div id="feedback" aria-live="polite"></div>
+    <div class="actions">
+      <button id="study" class="hidden" onclick="studyAnswer()">Study the answer</button>
+      <button id="next" class="primary hidden" onclick="nextProduction()">Next →</button>
+    </div>
+  `);
+  document.getElementById("answerForm").addEventListener("submit",event=>{
+    event.preventDefault();checkProduction();
+  });
+  document.getElementById("answer").focus();
+}
+
+function normalize(value){
+  return value.toLowerCase().trim().replace(/[.!?]+$/,"").trim().replace(/\s+/g," ");
+}
+
+function showHint(){
+  const record=production[index];
+  record.hint=true;
+  document.getElementById("hintArea").innerHTML=`
+    <div class="feedback note">${expressions[index].hint}</div>`;
+  document.getElementById("hint").disabled=true;
+  document.getElementById("answer").focus();
+}
+
+function checkProduction(){
+  const e=expressions[index],record=production[index];
+  if(record.done)return;
+  const input=document.getElementById("answer");
+  const value=normalize(input.value);
+  if(!value){
+    document.getElementById("feedback").innerHTML=
+      `<div class="feedback note">Type an expression first. 먼저 답을 입력해 주세요.</div>`;
+    input.focus();return;
+  }
+  record.attempts++;
+  if(value!==e.answer){
+    let tip="뜻과 철자를 다시 확인하고, 표현 전체를 써 보세요.";
+    if(e.answer==="pay attention to" && value==="pay attention"){
+      tip="거의 맞았어요! 뒤의 대상과 연결해 주는 전치사가 하나 필요해요.";
+    }else if(e.answer==="come up with" && value==="came up with"){
+      tip="can 뒤에는 동사 기본형이 필요해요. 과거형을 기본형으로 바꿔 보세요.";
+    }else if(value.includes(e.answer)){
+      tip="문장 전체가 아니라 빈칸에 들어갈 표현만 입력해 주세요.";
+    }
+    document.getElementById("feedback").innerHTML=`
+      <div class="feedback bad"><strong>Not quite yet — try again.</strong><p>${tip}</p></div>`;
+    document.getElementById("study").classList.remove("hidden");
+    input.focus();return;
+  }
+  record.done=true;
+  record.first=record.attempts===1&&!record.hint&&!record.revealed;
+  input.disabled=true;
+  document.getElementById("check").disabled=true;
+  document.getElementById("hint").disabled=true;
+  document.getElementById("study").classList.add("hidden");
+  document.getElementById("hintArea").innerHTML="";
+  document.getElementById("feedback").innerHTML=`
+    <div class="feedback good">
+      <strong>✓ ${e.sentence.replace("____",e.answer)}</strong>
+      <p>${e.translation}</p>
+      <span class="small">${record.first?"Recalled independently on your first try.":"Completed with practice — keep reviewing this one."}</span>
+    </div>`;
+  document.getElementById("next").classList.remove("hidden");
+}
+
+function studyAnswer(){
+  const e=expressions[index],record=production[index];
+  record.revealed=true;
+  document.getElementById("answer").value="";
+  document.getElementById("answer").disabled=true;
+  document.getElementById("check").disabled=true;
+  document.getElementById("study").classList.add("hidden");
+  document.getElementById("feedback").innerHTML=`
+    <div class="feedback note">
+      <strong>${e.answer} · ${e.ko}</strong>
+      <p>${e.sentence.replace("____",e.answer)}</p>
+      <button type="button" onclick="hideAnswer()">Hide answer & type from memory</button>
+    </div>`;
+}
+
+function hideAnswer(){
+  document.getElementById("feedback").innerHTML="";
+  document.getElementById("answer").disabled=false;
+  document.getElementById("check").disabled=false;
+  document.getElementById("answer").focus();
+}
+
+function nextProduction(){
+  if(!production[index].done)return;
+  index++;
+  if(index<6)showProduction();
+  else showReport();
+}
+
+function showReport(){
+  stage=3;finished=true;
+  pauseButton.classList.add("hidden");
+  const meaningScore=meaning.filter(r=>r.first).length;
+  const recallScore=production.filter(r=>r.first).length;
+  const review=expressions.filter((e,i)=>!meaning[i].first||!production[i].first);
+  render(`
+    <div class="badge" aria-hidden="true">🌍</div>
+    <div class="eyebrow">MISSION COMPLETE</div>
+    <h1>Your next step is greener.</h1>
+    <p>You practised all six expressions in the school story and a new picnic situation.</p>
+    <div class="grid">
+      <div class="tile"><strong>${meaningScore} / 6</strong>Meaning: correct on the first try</div>
+      <div class="tile"><strong>${recallScore} / 6</strong>Writing: first try, without help</div>
+      <div class="tile"><strong>6 / 6</strong>Expressions completed with practice</div>
+    </div>
+    <p class="small muted">These are practice results, not a proficiency grade.
+    힌트나 정답 확인 후 맞힌 표현은 복습할 표현으로 표시해요.</p>
+    <table>
+      <thead><tr><th>Expression</th><th>Meaning</th><th>Writing</th></tr></thead>
+      <tbody>${expressions.map((e,i)=>`
+        <tr><td><strong>${e.phrase}</strong><br>${e.ko}</td>
+        <td>${meaning[i].first?"✓ First try":"Practised"}</td>
+        <td>${production[i].first?"✓ Independent":"Review"}</td></tr>
+      `).join("")}</tbody>
+    </table>
+    <div class="detail">
+      <strong>${review.length?"Your review list":"Keep the expressions active"}</strong>
+      <p>${review.length?review.map(e=>e.phrase).join(" · "):
+      "You recalled all six independently. Try using them in your own project."}</p>
+      <p class="small">Tomorrow, cover the English expressions and recall them from the Korean meanings.</p>
+    </div>
+    <details style="margin-top:22px" id="bonus">
+      <summary>Time left? Write your own Eco Team sentence.</summary>
+      <p>Choose an expression and write one realistic action for your school.</p>
+      <label for="bonusPhrase">Expression</label>
+      <select id="bonusPhrase" style="font:inherit;padding:8px;border-radius:8px">
+        ${expressions.map(e=>`<option>${e.phrase}</option>`).join("")}
+      </select>
+      <label for="ownSentence" style="display:block;margin-top:12px">Your sentence</label>
+      <textarea id="ownSentence" placeholder="Our team will…"></textarea>
+      <p class="small">Self-check: Does the meaning fit? Is the whole expression included?
+      Is the verb form correct? Share your sentence with your teacher.</p>
+    </details>
+    <div class="actions">
+      <button onclick="toggleReview()">Expression notebook</button>
+      <button onclick="window.print()">Print my report</button>
+      <button class="primary" onclick="restart()">Practise again</button>
+    </div>
+    <div id="notebook" class="hidden">
+      ${expressions.map(e=>`
+        <div class="detail"><strong>${e.phrase} — ${e.ko}</strong>
+        <p>${e.pattern}<br>${e.example}</p></div>
+      `).join("")}
+    </div>
+  `);
+}
+
+function toggleReview(){
+  reviewOpen=!reviewOpen;
+  document.getElementById("notebook").classList.toggle("hidden",!reviewOpen);
+}
+
+function restart(){
+  stage=-1;index=0;seen=new Set();remaining=600;
+  started=false;paused=false;finished=false;reviewOpen=false;
+  meaning=expressions.map(()=>({attempts:0,first:false,done:false}));
+  production=expressions.map(()=>({
+    attempts:0,first:false,hint:false,revealed:false,done:false
+  }));
+  pauseButton.textContent="Pause";
+  pauseButton.classList.add("hidden");
+  timer.textContent="10:00";
+  showWelcome();
+}
+
+function togglePause(){
+  paused=!paused;lastTick=Date.now();
+  pauseButton.textContent=paused?"Resume":"Pause";
+  if(paused){
+    app.inert=true;
+    app.style.opacity=".35";
+    timer.textContent="Paused";
+  }else{
+    app.inert=false;app.style.opacity="1";updateTimer();
+  }
+}
+
+function updateTimer(){
+  const seconds=Math.ceil(remaining);
+  timer.textContent=seconds>0
+    ?`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")}`
+    :"Time guide reached · Keep going";
+}
+
+setInterval(()=>{
+  const now=Date.now();
+  const elapsed=(now-lastTick)/1000;
+  lastTick=now;
+  if(!started||paused||finished)return;
+  remaining=Math.max(0,remaining-elapsed);
+  updateTimer();
+},250);
+
+showWelcome();
+</script>
+</body>
+</html>
